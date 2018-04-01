@@ -12,7 +12,16 @@ namespace RestaurantSuggestion.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return View(new QuestionViewModel{
+                QuestionId= Guid.NewGuid(),
+                QuestionText= "Ce tip de mancare preferi?",
+                QuestionAnswers= new List<AnswerViewModel>
+                {
+                    new AnswerViewModel{ AnswerId= Guid.NewGuid(), AnswerText="Gatit"},
+                    new AnswerViewModel{AnswerId= Guid.NewGuid(), AnswerText="Fast food"}
+
+                }
+            });
         }
 
         public IActionResult About()
