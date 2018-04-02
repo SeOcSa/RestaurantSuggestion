@@ -97,7 +97,15 @@ namespace RestaurantSuggestion.Controllers
             var answerItem = _answerService.GetAnswer(AnswerId);
             var questionItem = _questionService.GetQuestion(answerItem.NextQuestionId);
             if (questionItem == null)
-                return View();
+                return View(new BigViewModel
+                {
+                    QuestionViewModel = new QuestionViewModel
+                    {
+                        QuestionId = answerItem.QuestionId,
+                        QuestionText= _questionService.GetQuestion(answerItem.QuestionId).QuestionText,
+                        QuestionAnswers = mapAnswer(_answerService.GetAnswersForQuestion(answerItem.QuestionId))
+                    }
+                });
             var questionItems = _answerService.GetAnswersForQuestion(questionItem.QuestionId);
 
             var viewModel = new BigViewModel
