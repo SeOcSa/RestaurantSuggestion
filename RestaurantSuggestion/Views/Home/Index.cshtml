@@ -1,20 +1,42 @@
-﻿@model QuestionViewModel
-
+﻿@model BigViewModel
 @{
     ViewData["Title"] = "Home";
 }
 
 <div class="row" style="margin-top: 10px">
-    <div class="alert alert-info" role="alert" id="@Model.QuestionId">
-        <h2>@Model.QuestionText</h2>
+    <div class="alert alert-info" role="alert" id="@Model.QuestionViewModel.QuestionId">
+        <h2>@Model.QuestionViewModel.QuestionText</h2>
     </div>
     <div class="container">
         <div class="row justify-content-md-center">
-            @foreach (var item in Model.QuestionAnswers)
+            @foreach (var item in Model.QuestionViewModel.QuestionAnswers)
             {
-                <div class="col-6">
-                    <button type="button" class="btn btn-primary btn-block btn-lg" id="@item.AnswerId">@item.AnswerText</button>
-                </div>
+            <div class="col-6">
+                <a asp-action="NextQuestion" asp-route-AnswerId="@item.AnswerId" id="@item.AnswerId" 
+                   class="btn btn-primary btn-lg btn-block">@item.AnswerText</a>
+            </div>
             }
         </div>
     </div>
+    <div style="margin-top: 30px">
+        <form method="post" asp-action="About">
+            <div class="form-group">
+                <input class="form-control form-control-lg" 
+                       type="text" asp-for="@Model.AddViewModel.QuestionText" placeholder="Question">
+            </div>
+            <div class="form-group">
+                <input class="form-control form-control-lg" asp-for="@Model.AddViewModel.Answer1" 
+                       type="text" placeholder="Answer 1">
+            </div>
+            <div class="form-group">
+                <input class="form-control form-control-lg"  asp-for="@Model.AddViewModel.Answer2" 
+                       type="text" placeholder="Answer 2">
+            </div>
+            <div class="form-group">
+                <input class="form-control form-control-lg"  asp-for="@Model.AddViewModel.Answer3" 
+                       type="text" placeholder="Answer 3">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
