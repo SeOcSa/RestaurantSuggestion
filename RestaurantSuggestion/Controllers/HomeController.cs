@@ -19,7 +19,6 @@ namespace RestaurantSuggestion.Controllers
             _questionService = questionService;
             _answerService = answerService;
         }
-        bool FirstRun = true;
         public IActionResult Index()
         {
             var item = _questionService.GetFristQuestion();
@@ -96,16 +95,14 @@ namespace RestaurantSuggestion.Controllers
         {
             var answerItem = _answerService.GetAnswer(AnswerId);
             var questionItem = _questionService.GetQuestion(answerItem.NextQuestionId);
+
             if (questionItem == null)
-                return View(new BigViewModel
-                {
-                    QuestionViewModel = new QuestionViewModel
-                    {
-                        QuestionId = answerItem.QuestionId,
-                        QuestionText= _questionService.GetQuestion(answerItem.QuestionId).QuestionText,
-                        QuestionAnswers = mapAnswer(_answerService.GetAnswersForQuestion(answerItem.QuestionId))
-                    }
-                });
+            {
+                var finalAnswer = _answerService.GetAnswer(answerItem.NextQuestionId);
+                var model = new AnswerViewModel { AnswerId = finalAnswer.AnswerId, AnswerText = finalAnswer.AnswerText };
+                return RedirectToAction("FinalAnswer", model);
+            }
+
             var questionItems = _answerService.GetAnswersForQuestion(questionItem.QuestionId);
 
             var viewModel = new BigViewModel
@@ -121,6 +118,10 @@ namespace RestaurantSuggestion.Controllers
             return View(viewModel);
         }
 
+        public IActionResult FinalAnswer(AnswerViewModel model)
+        {
+            return View(model);
+        }
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
