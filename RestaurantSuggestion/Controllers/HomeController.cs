@@ -103,7 +103,7 @@ namespace RestaurantSuggestion.Controllers
                 return RedirectToAction("FinalAnswer", model);
             }
 
-            var questionItems = _answerService.GetAnswersForQuestion(questionItem.QuestionId);
+            var questionItems = _answerService.GetAnswersForQuestion(questionItem.QuestionId).OrderBy(x => x.AnswerText).ToList();
 
             var viewModel = new BigViewModel
             {
