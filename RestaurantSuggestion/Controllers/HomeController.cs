@@ -25,12 +25,13 @@ namespace RestaurantSuggestion.Controllers
             var itemAnswers = _answerService.GetAnswersForQuestion(item.QuestionId).OrderBy(x => x.AnswerText).ToList();
             return View(new BigViewModel
             {
-                QuestionViewModel= new QuestionViewModel
+                QuestionViewModel = new QuestionViewModel
                 {
                     QuestionId = item.QuestionId,
                     QuestionText = item.QuestionText,
                     QuestionAnswers = mapAnswer(itemAnswers)
-                }
+                },
+                ShowQuestionForm = false
             });
         }
         private List<AnswerViewModel> mapAnswer(List<AnswerModel> list)

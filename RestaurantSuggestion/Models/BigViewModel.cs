@@ -9,5 +9,6 @@ namespace RestaurantSuggestion.Models
     {
         public QuestionViewModel QuestionViewModel { get; set; }
         public AddViewModel AddViewModel { get; set; }
+        public bool ShowQuestionForm { get; set; }
     }
 }
