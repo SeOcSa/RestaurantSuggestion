@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantSuggestion.Data.Models;
 using RestaurantSuggestion.Data.Services;
+using RestaurantSuggestion.InferenceMachine;
 using RestaurantSuggestion.Models;
 
 namespace RestaurantSuggestion.Controllers
@@ -14,15 +15,19 @@ namespace RestaurantSuggestion.Controllers
     {
         private readonly IQuestionSql _questionService;
         private readonly IAnswerSql _answerService;
-        public HomeController(IQuestionSql questionService, IAnswerSql answerService)
+        private readonly IInferenceMachine _infecenceMachine;
+
+        public HomeController(IQuestionSql questionService, IAnswerSql answerService, IInferenceMachine infecenceMachine)
         {
             _questionService = questionService;
             _answerService = answerService;
+            _infecenceMachine = infecenceMachine;
         }
         public IActionResult Index()
         {
-            var item = _questionService.GetFristQuestion();
-            var itemAnswers = _answerService.GetAnswersForQuestion(item.QuestionId).OrderBy(x => x.AnswerText).ToList();
+            var item = _infecenceMachine.GetStartUpQuestion();
+            var itemAnswers = _infecenceMachine.GetAnswersForQuestion(item.QuestionId);
+
             return View(new BigViewModel
             {
                 QuestionViewModel = new QuestionViewModel
@@ -94,17 +99,17 @@ namespace RestaurantSuggestion.Controllers
 
         public IActionResult NextQuestion(Guid AnswerId)
         {
-            var answerItem = _answerService.GetAnswer(AnswerId);
-            var questionItem = _questionService.GetQuestion(answerItem.NextQuestionId);
+            var answerItem = _infecenceMachine.GetAnswer(AnswerId);
+            var questionItem = _infecenceMachine.GetQuestion(answerItem.NextQuestionId);
 
             if (questionItem == null)
             {
-                var finalAnswer = _answerService.GetAnswer(answerItem.NextQuestionId);
+                var finalAnswer = _infecenceMachine.GetAnswer(answerItem.NextQuestionId);
                 var model = new AnswerViewModel { AnswerId = finalAnswer.AnswerId, AnswerText = finalAnswer.AnswerText };
                 return RedirectToAction("FinalAnswer", model);
             }
 
-            var questionItems = _answerService.GetAnswersForQuestion(questionItem.QuestionId).OrderBy(x => x.AnswerText).ToList();
+            var questionItems = _infecenceMachine.GetAnswersForQuestion(questionItem.QuestionId);
 
             var viewModel = new BigViewModel
             {
@@ -123,6 +128,7 @@ namespace RestaurantSuggestion.Controllers
         {
             return View(model);
         }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

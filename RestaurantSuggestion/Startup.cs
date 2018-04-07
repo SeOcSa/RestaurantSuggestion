@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RestaurantSuggestion.Data.DbContext;
 using RestaurantSuggestion.Data.Services;
+using RestaurantSuggestion.InferenceMachine;
 
 namespace RestaurantSuggestion
 {
@@ -29,8 +30,10 @@ namespace RestaurantSuggestion
             services.AddDbContext<RestaurantSuggestionDbContext>(
                options => options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
 
+            services.AddTransient<IInferenceMachine, InferenceMachine.InferenceMachine>();
             services.AddTransient<IQuestionSql, QuestionService>();
             services.AddTransient<IAnswerSql, AnswerService>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
